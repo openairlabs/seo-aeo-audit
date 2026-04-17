@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+
+# Virtualenv
+venv/
+env/
+.venv/
+
+# Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Audit outputs (never commit a user's scan of a site)
+audits/
+*.docx
+!templates/*.docx
+
+# Secrets
+.env
+.env.local

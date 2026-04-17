@@ -19,39 +19,54 @@ Trigger when the user asks to:
 
 ### Step 1 — Verify environment
 
-Before anything else, check that deps are installed:
+**CRITICAL: This skill installs its Python deps into a venv at `~/.claude/skills/seo-aeo-audit/venv/`. Always use the venv's Python — NEVER plain `python3` or `python`.** Plain `python3` is the system Python and won't have the skill's deps, so it will always report missing modules and send you down a false install path.
 
-```bash
-python3 -c "import playwright, httpx, bs4, tldextract, click" 2>&1
+The single Python binary to use everywhere in this skill is:
+
+```
+~/.claude/skills/seo-aeo-audit/venv/bin/python
 ```
 
-(The `extruct` library is imported optionally and not required for the core audit.)
+**First, check if the venv is installed:**
 
-If this fails, run through the install ladder:
+```bash
+ls ~/.claude/skills/seo-aeo-audit/venv/bin/python 2>/dev/null && echo "venv present" || echo "venv missing"
+```
+
+**If the venv is present, verify deps (using the venv's Python):**
+
+```bash
+~/.claude/skills/seo-aeo-audit/venv/bin/python -c "import playwright, httpx, bs4, tldextract, click, docx" 2>&1
+```
+
+(`extruct` is optional. `docx` means `python-docx` — required for the `.docx` output step.)
+
+**Only if the venv is missing or the import check fails,** run the install ladder:
 
 ```bash
 # 1. If pip is missing (Ubuntu/WSL often lacks it):
 sudo apt-get install -y python3-pip python3-venv
 
-# 2. Create an isolated venv for the skill (recommended):
+# 2. Create the skill's venv:
 python3 -m venv ~/.claude/skills/seo-aeo-audit/venv
-source ~/.claude/skills/seo-aeo-audit/venv/bin/activate
 
-# 3. Install Python deps:
-pip install -r ~/.claude/skills/seo-aeo-audit/requirements.txt
+# 3. Install Python deps (use the venv's pip, NOT system pip):
+~/.claude/skills/seo-aeo-audit/venv/bin/pip install -r ~/.claude/skills/seo-aeo-audit/requirements.txt
 
-# 4. Install headless Chromium (one-time, ~150MB):
-python -m playwright install chromium
+# 4. Install at least one Playwright browser (uses the venv's python):
+~/.claude/skills/seo-aeo-audit/venv/bin/python -m playwright install chromium
+# or firefox: ~/.claude/skills/seo-aeo-audit/venv/bin/python -m playwright install firefox
+# or webkit:  ~/.claude/skills/seo-aeo-audit/venv/bin/python -m playwright install webkit
 ```
 
-If you created the venv, all subsequent `python3 ~/.claude/skills/seo-aeo-audit/audit.py ...` calls must be prefixed by activating the venv (or use the full path `~/.claude/skills/seo-aeo-audit/venv/bin/python`).
-
-Offer to run the install for the user. Do not proceed with the analyzer until imports succeed.
+Offer to run the install for the user if needed. Do not proceed with the analyzer until the venv's Python can import the modules.
 
 ### Step 2 — Run the analyzer
 
+Always invoke via the venv's Python:
+
 ```bash
-python ~/.claude/skills/seo-aeo-audit/audit.py <URL> --out ./audits/
+~/.claude/skills/seo-aeo-audit/venv/bin/python ~/.claude/skills/seo-aeo-audit/audit.py <URL> --out ./audits/
 ```
 
 Common flags:
@@ -135,14 +150,16 @@ Keep `summary.md` to roughly 800-1500 words.
 
 ### Step 8 — Render .docx versions of both
 
-Run the bundled converter to produce Word-compatible docx files:
+Run the bundled converter to produce Word-compatible docx files (again, always via the venv's Python):
 
 ```bash
-python ~/.claude/skills/seo-aeo-audit/render_docx.py \
+~/.claude/skills/seo-aeo-audit/venv/bin/python \
+  ~/.claude/skills/seo-aeo-audit/render_docx.py \
   ./audits/<domain>/<date>/report.md \
   ./audits/<domain>/<date>/report.docx
 
-python ~/.claude/skills/seo-aeo-audit/render_docx.py \
+~/.claude/skills/seo-aeo-audit/venv/bin/python \
+  ~/.claude/skills/seo-aeo-audit/render_docx.py \
   ./audits/<domain>/<date>/summary.md \
   ./audits/<domain>/<date>/summary.docx
 ```

@@ -1,4 +1,9 @@
-# seo-aeo-audit
+# seo-aeo-audit /SKILL by https://flyweel.co
+
+  <a href="https://freeimage.host/i/BUFwmps">
+    <img src="https://iili.io/BUFwmps.png" alt="seo-aeo-audit" width="100%" />
+  </a>
+
 
 A framework-agnostic SEO + AEO (Answer-Engine Optimization) audit skill for Claude Code. Point it at any live website on any framework and it produces a prioritized improvement report with stack-specific code fixes — plus a plain-English summary for non-technical stakeholders.
 

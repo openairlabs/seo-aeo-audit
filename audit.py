@@ -628,48 +628,8 @@ def parse_page(url: str, html: str, template: str, meta: dict[str, Any]) -> Page
     # FAQ detected in content = 3+ question-headings in document body
     p.faq_detected_in_content = p.question_headings >= 3
 
-    # Content text + word count (exclude nav/footer/script/style)
-    for tag in soup(["script", "style", "nav", "footer", "header"]):
-        tag.decompose()
-    body_text = soup.get_text(" ", strip=True)
-    p.word_count = len(body_text.split())
-
-    # Direct-answer proxy: first <p> inside <article> or <main> or first visible <p>
-    container = soup.find("article") or soup.find("main") or soup.body
-    if container:
-        first_p = container.find("p")
-        if first_p:
-            p.direct_answer_words = len(first_p.get_text(" ", strip=True).split())
-
-    # TOC detection: look for nav/list of internal anchors near top
-    for nav in soup.find_all(["nav", "ul", "ol"], limit=10):
-        anchors = nav.find_all("a", href=lambda h: h and h.startswith("#"))
-        if len(anchors) >= 3:
-            p.toc_detected = True
-            break
-
-    # Images
-    imgs = soup.find_all("img")
-    p.image_count = len(imgs)
-    p.image_missing_alt = sum(1 for i in imgs if not i.get("alt") and i.get("alt") != "")
-
-    # Links
-    base_host = urlparse(url).netloc
-    for a in soup.find_all("a", href=True):
-        h = a["href"]
-        if h.startswith("#") or h.startswith("mailto:") or h.startswith("tel:"):
-            continue
-        full = urljoin(url, h)
-        host = urlparse(full).netloc
-        if host == base_host:
-            p.internal_links += 1
-        else:
-            p.external_links += 1
-        rel = " ".join(a.get("rel") or [])
-        if "nofollow" in rel:
-            p.nofollow_links += 1
-
-    # JSON-LD extraction
+    # JSON-LD extraction MUST happen before the decompose below, which strips all
+    # <script> tags from the soup for word-count hygiene — including ld+json.
     ld_blocks = soup.find_all("script", type=lambda v: v and "ld+json" in v)
     for s in ld_blocks:
         try:
@@ -736,6 +696,47 @@ def parse_page(url: str, html: str, template: str, meta: dict[str, Any]) -> Page
     if article:
         p.date_published = article.get("datePublished")
         p.date_modified = article.get("dateModified")
+
+    # Content text + word count (exclude nav/footer/script/style)
+    for tag in soup(["script", "style", "nav", "footer", "header"]):
+        tag.decompose()
+    body_text = soup.get_text(" ", strip=True)
+    p.word_count = len(body_text.split())
+
+    # Direct-answer proxy: first <p> inside <article> or <main> or first visible <p>
+    container = soup.find("article") or soup.find("main") or soup.body
+    if container:
+        first_p = container.find("p")
+        if first_p:
+            p.direct_answer_words = len(first_p.get_text(" ", strip=True).split())
+
+    # TOC detection: look for nav/list of internal anchors near top
+    for nav in soup.find_all(["nav", "ul", "ol"], limit=10):
+        anchors = nav.find_all("a", href=lambda h: h and h.startswith("#"))
+        if len(anchors) >= 3:
+            p.toc_detected = True
+            break
+
+    # Images
+    imgs = soup.find_all("img")
+    p.image_count = len(imgs)
+    p.image_missing_alt = sum(1 for i in imgs if not i.get("alt") and i.get("alt") != "")
+
+    # Links
+    base_host = urlparse(url).netloc
+    for a in soup.find_all("a", href=True):
+        h = a["href"]
+        if h.startswith("#") or h.startswith("mailto:") or h.startswith("tel:"):
+            continue
+        full = urljoin(url, h)
+        host = urlparse(full).netloc
+        if host == base_host:
+            p.internal_links += 1
+        else:
+            p.external_links += 1
+        rel = " ".join(a.get("rel") or [])
+        if "nofollow" in rel:
+            p.nofollow_links += 1
 
     # Framework signature detection (single-page hint; aggregated later)
     for fw_name, sigs in FRAMEWORK_SIGNATURES:

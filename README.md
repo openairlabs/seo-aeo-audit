@@ -127,29 +127,36 @@ python render_docx.py summary.md summary.docx
 
 ## What gets checked
 
+The analyzer emits a fixed set of finding ids. To see the authoritative list at any time:
+
+```bash
+python audit.py --list-checks
+```
+
+`references/checks-catalog.md` documents every one of them with the reasoning behind it. The two are kept in sync deliberately — if they disagree, that's a bug.
+
 ### SEO (deterministic, Python)
-- Meta title (30-70 chars, keyword placement), meta description (120-160 chars, CTA)
-- Canonical, hreflang, robots directives, viewport, `<html lang>`, charset
-- Open Graph (type, url, title, description, image 1200×630) + Twitter Card
-- Sitemap.xml + robots.txt consistency, llms.txt presence
-- Heading hierarchy (exactly one H1; no H1→H3 jumps)
-- Word count per template (thin-content flags)
-- Image alt coverage, internal link graph, broken links (sampled)
-- Redirect chains, status codes
-- Core Web Vitals proxies (FCP, LCP element, page weight, resource count) via Playwright
+- Meta title (30-70 chars), meta description (120-160 chars)
+- Canonical, `<html lang>`, viewport, hreflang self-reference
+- Open Graph completeness + og:image dimensions (1200×630)
+- robots.txt and sitemap.xml presence
+- Heading hierarchy (exactly one H1; no skipped levels)
+- Thin content per template
+- Image alt coverage, legacy image formats (no WebP/AVIF)
+- Redirect chains, 4xx/5xx status codes
+- LCP, CLS and page weight, measured in one synthetic Playwright load
 
 ### AEO (deterministic, Python)
-- Schema.org coverage matrix per template (WebSite + Organization + BlogPosting + FAQPage + QAPage + Product + SoftwareApplication + BreadcrumbList + Speakable)
-- Deprecated-schema detection (HowTo, SpecialAnnouncement, ClaimReview, and friends) reported as informational, not as an error
+- **Server-side rendering** — whether content survives without JavaScript. AI crawlers don't run it, so this gates everything else
+- AI crawler policy, scored in two tiers: blocking search/citation crawlers is a visibility loss; blocking training-only crawlers is a licensing choice, reported without judgement
+- Schema.org coverage matrix per template (WebSite, Organization, BlogPosting, FAQPage, QAPage, Product, SoftwareApplication, BreadcrumbList, Speakable)
+- Deprecated-schema detection (HowTo, SpecialAnnouncement, ClaimReview and friends) reported as informational, not as an error
 - Organization schema depth (founder[], sameAs[] **with Wikidata URL**, knowsAbout[], slogan, foundingDate, contactPoint, hasOfferCatalog)
-- FAQ content detection vs. FAQPage schema presence
-- Direct-answer paragraph (≤50 words opening)
-- Question-format headings count
+- Direct-answer opening (40-60 words) and passage-level citability (~134-167 word sections)
 - Table of contents on long posts
-- Author schema + E-E-A-T fields
-- `dateModified` freshness
-- AI crawler robots.txt policy (GPTBot, ClaudeBot, PerplexityBot, CCBot, Google-Extended, Applebot-Extended, Bytespider, Amazonbot, cohere-ai, Diffbot, DuckAssistBot, PetalBot, YouBot, etc.)
-- Wikidata cross-reference detection
+- `dateModified` freshness (180 days)
+
+**INP is not measured** — it needs real user interaction and only exists in field data (CrUX). See the scope table above.
 
 ### Strategic & design (Claude, from screenshots)
 - Above-the-fold 3-second test — what does the site do, who's it for?

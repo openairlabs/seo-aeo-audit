@@ -857,11 +857,11 @@ def build_findings(
     if not robots.get("has_llms_txt"):
         findings.append(Finding(
             id="aeo.llms_txt.missing",
-            severity="medium", category="aeo", template=None, affected_urls=[base_url],
+            severity="info", category="aeo", template=None, affected_urls=[base_url],
             evidence="No /llms.txt served.",
-            why="llms.txt is an emerging convention for AI crawlers — a curated index of your most important content for LLM consumption. Early signal of AEO maturity.",
-            recommendation="Publish /llms.txt listing primary pages (home, pricing, docs, product) for AI-specific discovery.",
-            framework_fix_key="llms_txt.missing", impact_score=5,
+            why="No major AI search system is known to consume llms.txt, and server-log studies show it draws a negligible share of AI-bot traffic. It carries no citation weight today. See references/aeo-evidence.md.",
+            recommendation="Not required for AI search visibility — do not prioritise it over SSR, schema depth, or crawler access. It is worth publishing only if you want AI coding agents to navigate your developer docs.",
+            framework_fix_key="llms_txt.missing", impact_score=1,
         ))
 
     # --- Per-page + per-template aggregates ---
@@ -1060,11 +1060,11 @@ def build_findings(
     if faq_missing:
         findings.append(Finding(
             id="aeo.faqpage_schema.missing",
-            severity="high", category="aeo", template=None, affected_urls=faq_missing,
+            severity="info", category="aeo", template=None, affected_urls=faq_missing,
             evidence=f"{len(faq_missing)} page(s) have question-format headings but no FAQPage JSON-LD.",
-            why="FAQPage schema unlocks rich results in Google, voice answers, and direct citations in AI answer engines.",
-            recommendation="Auto-generate FAQPage JSON-LD from question-format H2/H3 headings and their following paragraph.",
-            framework_fix_key="faqpage_schema.missing", impact_score=8,
+            why="Google retired FAQPage rich results for all sites, so there is no SERP gain here. AI answer engines still parse the markup for question-answer extraction, which is the only remaining reason to add it.",
+            recommendation="Optional. If the questions are genuine and already well-structured in the HTML, generating FAQPage JSON-LD costs little and may help AI answer extraction. Do not add it expecting rich results, and never remove existing FAQPage markup. For single-question pages with community answers, use QAPage instead.",
+            framework_fix_key="faqpage_schema.missing", impact_score=2,
         ))
 
     # Speakable schema for blog

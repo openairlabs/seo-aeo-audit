@@ -17,7 +17,7 @@ The principles that drive modern "gold-standard" content and site architecture. 
 | Backlinks as authority | Schema + entity density as authority |
 | CTR from the blue link | Attribution in AI answer |
 | Content length (2000+) | Direct-answer opening (≤50 words) |
-| Sitemap discovery | llms.txt + schema + Wikidata |
+| Sitemap discovery | Schema + Wikidata + server-rendered HTML |
 
 **The synthesis**: write for both. A sharp direct-answer opening satisfies AEO; the 2000-word explanation satisfies SEO.
 
@@ -30,7 +30,7 @@ When auditing, look for these specifically. Sites that nail 5/6 outperform on AI
 3. **Direct-answer openings** — ≤50 words. AI cites verbatim.
 4. **Question-format headings** — auto-expands AEO surface area.
 5. **Open robots.txt policy for AI crawlers** — GPTBot, ClaudeBot, PerplexityBot, CCBot, Google-Extended, Applebot-Extended. Blocked = invisible.
-6. **llms.txt** — emerging standard; maturity signal.
+6. **Server-side rendering** — AI crawlers don't run JavaScript. Client-rendered content doesn't exist to them.
 
 ## The content quality stack (research → generation → refinement → polish)
 

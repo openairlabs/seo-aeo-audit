@@ -142,7 +142,7 @@ Rules for the summary:
   - Positioning / hero-headline tightening (suggest actual rewrites when you can)
   - Trust signals to add (logos, case studies, counts, testimonials)
   - Pages to create (comparisons, tools/calculators, guides) that capture commercial-intent traffic
-  - Distribution plays (llms.txt, newsletter, Wikipedia/Wikidata presence, community, podcast outreach)
+  - Distribution plays (newsletter, Wikipedia/Wikidata presence, community, podcast outreach, brand mentions on the platforms AI engines cite most)
 - **Glossary** — define every acronym and technical term used.
 - **Tone:** confident, specific, kind. Not condescending. Assume the reader is smart but not a web developer.
 
@@ -192,7 +192,8 @@ Most audits are SEO-only. AEO (how AI answer engines like ChatGPT, Perplexity, G
 - **Schema depth** — Organization schema with `sameAs` including Wikidata URL is a 10x entity-recognition signal
 - **Speakable + QAPage schemas** — live AEO surfaces. Note: FAQPage no longer produces rich results (retired for all sites) but is still parsed for AI answer extraction — keep it where it exists, don't chase it for SERP gain. Never recommend HowTo; Google removed its rich results in September 2023.
 - **AI crawler policy** — robots.txt must allow GPTBot, ClaudeBot, PerplexityBot, CCBot, Google-Extended, Applebot-Extended (flag any disallows as gaps unless the user has a reason)
-- **llms.txt** — emerging standard, flag if missing
+- **llms.txt** — report presence only. No major AI search system consumes it and it carries no citation weight (see `references/aeo-evidence.md`). Never rank it above SSR, schema depth, or crawler access in a roadmap.
+- **Server-side rendering** — AI crawlers do not execute JavaScript. A client-rendered page is invisible to every answer engine no matter how good its schema is. This is the highest-priority AEO check there is.
 - **Direct-answer structure** — first ≤50 words of each page should answer the implied question
 - **Entity density** — how many Wikipedia/Wikidata-linkable entities appear as `sameAs`?
 

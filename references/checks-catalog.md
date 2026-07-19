@@ -17,7 +17,7 @@ Every check run by the analyzer, what it measures, and why it matters. Claude us
 ### Distribution & discovery
 - **robots.txt served** — crawl-directive discoverability
 - **sitemap.xml present, referenced in robots.txt** — accelerates indexation, signals canonical set
-- **llms.txt present** — emerging convention for AI crawlers
+- **llms.txt present** — reported for completeness only; no known AI search consumer, no citation weight (`references/aeo-evidence.md`)
 - **RSS autodiscovery** — for content sites
 - **Image sitemap** — boosts image search
 - **Status codes / redirect chains** — each hop = wasted crawl budget + latency
@@ -67,14 +67,14 @@ Every check run by the analyzer, what it measures, and why it matters. Claude us
 ### Answer-engine readability
 - **Direct-answer paragraph ≤50 words** — AI engines cite verbatim; long intros bury the answer
 - **Question-format H2/H3 count** — triggers PAA surfacing + FAQPage auto-extraction
-- **FAQ in content + FAQPage schema** — missing schema on detected FAQ = wasted signal
+- **FAQ in content + FAQPage schema** — informational only. Rich results are retired for FAQPage; the markup still feeds AI answer extraction, so it's worth having but not worth prioritising
 - **SpeakableSpecification** — voice search + Google Assistant direct answers
 - **Table of contents with anchors** — AI chunks content; TOC helps surface jump-to links
 - **Citations to authoritative sources** — helps AI verify claims + increases your citation rate
 
 ### AI crawler & emerging signals
 - **robots.txt allows GPTBot, ClaudeBot, PerplexityBot, CCBot, Google-Extended, Applebot-Extended** — blocked crawlers = invisible to AI answer engines
-- **llms.txt** — emerging AEO maturity signal
+- **Server-side rendering** — AI crawlers don't execute JavaScript; a client-rendered page reads as an empty shell
 - **Author schema + E-E-A-T fields** (`jobTitle`, `sameAs`, `alumniOf`) — expert attribution
 - **Entity density / Wikidata references** — transforms "string" into "entity"
 - **dateModified freshness** — recent = preferred for AI queries

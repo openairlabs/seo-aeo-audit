@@ -71,7 +71,7 @@ Based on what I saw, here are creative/strategic moves beyond fixing broken thin
 {{Comparison pages, free tools, calculators, guides — ideas that capture commercial-intent traffic.}}
 
 ### Distribution plays
-{{llms.txt, newsletter, community, Wikipedia/Wikidata presence, podcast outreach — ideas beyond on-site.}}
+{{Newsletter, community, Wikipedia/Wikidata presence, podcast outreach, getting mentioned on the sites AI engines cite most — ideas beyond on-site.}}
 
 ---
 
@@ -84,8 +84,9 @@ Based on what I saw, here are creative/strategic moves beyond fixing broken thin
 - **Canonical URL** — Code instruction telling Google "this is the one true address for this page" — prevents your own URL variants from competing with each other.
 - **Open Graph** — The preview card when someone pastes your link in Slack, LinkedIn, X, Facebook. Missing = an empty/ugly preview.
 - **robots.txt** — File that tells search engines and AI crawlers which pages they're allowed to read.
-- **llms.txt** — A newer file that does the same for AI assistants specifically — a curated map of your most important content.
-- **FAQPage schema** — Code that turns Q&A sections into rich results in Google and direct citations in AI answers.
+- **llms.txt** — A newer file meant to do the same for AI assistants. Widely recommended, but no major AI search engine actually reads it yet, so treat it as optional.
+- **FAQPage schema** — Code that labels your Q&A sections so AI assistants can quote them. Google no longer turns it into a special search result, but AI answers still use it.
+- **Server-side rendering** — Whether your pages arrive as finished HTML or get assembled in the visitor's browser. AI crawlers can't run that assembly step, so browser-assembled pages look blank to them.
 - **Core Web Vitals** — Google's page-speed grades (LCP, CLS, INP). Slow = rank penalty.
 
 ---

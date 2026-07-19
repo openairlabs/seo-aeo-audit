@@ -31,9 +31,18 @@ Given a URL, the tool:
 
 ## Why AEO matters
 
-Most audits cover SEO. This one equally weights AEO — Answer-Engine Optimization — the signals that make AI assistants (ChatGPT, Perplexity, Google AI Overview, Claude) cite your site. In 2026, more than half of all searches go through an AI interface before ever hitting a Google blue link. If your Organization schema doesn't reference Wikidata, your FAQ sections don't emit `FAQPage` JSON-LD, your blog posts don't have Speakable schema, and your robots.txt silently blocks `GPTBot` / `ClaudeBot` / `PerplexityBot` — you're invisible to half of all searches.
+Most audits cover SEO. This one equally weights AEO — Answer-Engine Optimization — the signals that make AI assistants (ChatGPT, Perplexity, Google AI Overviews, Claude) cite your site. A large and growing share of searches now resolve inside an AI answer rather than a blue link, and the things that get you cited there only partly overlap with the things that get you ranked.
+
+The checks that matter most, in order:
+
+1. **Server-side rendering.** AI crawlers do not execute JavaScript. A client-rendered page is an empty shell to every answer engine, no matter how good its schema is. Nothing else on this list matters until this is true.
+2. **AI crawler access.** A `robots.txt` that blocks `GPTBot` / `ClaudeBot` / `PerplexityBot` removes you from AI-mediated discovery. Blocking training-only crawlers like `CCBot` is a separate, legitimate choice — this tool scores the two differently.
+3. **Entity signals.** Organization schema whose `sameAs` includes a Wikidata URL is the difference between your brand being a string and being an entity.
+4. **Answer structure.** A direct 40–60 word answer up front, in sections short enough to quote whole.
 
 The report treats these with the same severity as missing title tags.
+
+Claims that change a finding's severity are sourced in [`references/aeo-evidence.md`](references/aeo-evidence.md) — including the ones this tool deliberately does *not* weight, like `llms.txt`.
 
 ---
 
@@ -42,7 +51,7 @@ The report treats these with the same severity as missing title tags.
 Python 3.10+ required.
 
 ```bash
-git clone https://github.com/YOUR-ORG/seo-aeo-audit ~/.claude/skills/seo-aeo-audit
+git clone https://github.com/openairlabs/seo-aeo-audit ~/.claude/skills/seo-aeo-audit
 cd ~/.claude/skills/seo-aeo-audit
 
 python3 -m venv venv
@@ -153,6 +162,24 @@ python render_docx.py summary.md summary.docx
 - Topical authority gaps
 - Mobile-first impression
 - Visual hierarchy
+
+---
+
+## What this does *not* do
+
+This tool runs standalone against a live URL with no credentials and no full-site crawl. That buys you a zero-setup audit, and it costs you these:
+
+| Not covered | Why | Where to get it |
+|---|---|---|
+| Backlink profile | Needs a paid link index | Ahrefs, Semrush, Moz API |
+| Brand mentions across the web | Needs a paid index; correlates with AI citation more strongly than domain authority does | Ahrefs, dedicated AI-visibility tools |
+| Keyword rankings & search volume | Needs SERP data | Semrush, DataForSEO, Search Console |
+| Real user performance (INP, field LCP/CLS) | Needs field data from actual visitors. This tool measures LCP and CLS in one synthetic load — indicative, not authoritative. **INP cannot be measured synthetically at all**, because it requires real interaction | Google CrUX, Search Console |
+| Traffic and indexation reality | Needs authenticated access to your own properties | Search Console, GA4 |
+| Orphan pages, site-wide broken links | Needs a full crawl; this tool samples one page per template | Screaming Frog, Sitebulb |
+| Local SEO, GBP, review signals | Different problem domain | A dedicated local SEO tool |
+
+Findings are based on a **sample** — one representative page per detected template, not every page. Treat template-level findings as "this template has this problem", not as an exhaustive page list.
 
 ---
 

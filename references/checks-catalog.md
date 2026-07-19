@@ -58,6 +58,10 @@ If that output and this file disagree, one of them is a bug.
 
 Measured in a single synthetic page load, not from real visitors. Treat as indicative.
 
+LCP and CLS require Chromium — under `--browser firefox` or `--browser webkit` they stay null and
+neither finding fires. `page_weight` is derived from Content-Length, so chunked responses contribute
+nothing and the figure is a lower bound.
+
 | Finding id | Severity | What & why |
 |---|---|---|
 | `seo.performance.lcp` | medium / high | Largest Contentful Paint. Good ≤2.5s, poor >4.0s. |
@@ -77,7 +81,8 @@ claiming otherwise is measuring something else.
 
 | Finding id | Severity | What & why |
 |---|---|---|
-| `aeo.ssr.missing` | critical | AI crawlers do not execute JavaScript. A client-rendered page is an empty shell to every answer engine regardless of how good its schema or content is. Nothing else in this section matters until this passes. |
+| `aeo.ssr.missing` | critical | AI crawlers do not execute JavaScript. A client-rendered page is an empty shell to every answer engine regardless of how good its schema or content is. Nothing else in this section matters until this passes. Detection compares body word count before and after JavaScript runs, so the evidence cites both numbers. |
+| `aeo.ssr.unverified` | info | Rendering was skipped (`--no-render`, or Playwright unavailable), so there is no post-JavaScript document to compare against. The check could not run — this is not a pass. |
 
 ### Crawler access
 

@@ -37,8 +37,10 @@ except ImportError:
 # Identify the tool honestly so site owners can recognise (and rate-limit, or allow)
 # it in their access logs. A spoofed browser UA is both dishonest and more likely to
 # be blocked by WAFs that fingerprint mismatched header sets.
+__version__ = "2.0.0"
+
 USER_AGENT = (
-    "Mozilla/5.0 (compatible; seo-aeo-audit/1.0; "
+    f"Mozilla/5.0 (compatible; seo-aeo-audit/{__version__}; "
     "+https://github.com/openairlabs/seo-aeo-audit)"
 )
 

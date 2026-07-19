@@ -26,9 +26,11 @@ weight for AI citation.
 
 ### Added
 
-- `aeo.ssr.missing` (**critical**) — detects client-rendered pages. AI crawlers do not execute
-  JavaScript, so a client-rendered page reads as an empty shell to every answer engine. This is the
-  highest-priority AEO check in the tool.
+- `aeo.ssr.missing` (**critical**) — detects client-rendered pages by comparing body word count
+  before and after JavaScript runs. AI crawlers do not execute JavaScript, so a client-rendered page
+  reads as an empty shell to every answer engine. This is the highest-priority AEO check in the tool.
+- `aeo.ssr.unverified` (info) — emitted when rendering was skipped (`--no-render`, or Playwright
+  unavailable), since client rendering cannot be established without a render to compare against.
 - `aeo.passage.citability` — scores section length against the 134-167 word band that AI engines
   cite best, and flags answers buried past the first 30% of a page.
 - `aeo.schema.deprecated` (info) — reports schema types Google has retired rich results for: HowTo,
@@ -39,8 +41,8 @@ weight for AI citation.
   PerformanceObserver during the Playwright pass.
 - `seo.heading_hierarchy.jump`, `seo.open_graph.image_dimensions`, `seo.performance.page_weight`,
   `seo.images.legacy_format`, `seo.hreflang.non_reciprocal`.
-- `--list-checks` prints every finding id the analyzer can emit, with severity and category, from a
-  single source of truth. `references/checks-catalog.md` is kept in sync with it.
+- `--list-checks` prints all 37 finding ids the analyzer can emit, with severity and category, from
+  a single source of truth. `references/checks-catalog.md` is kept in sync with it.
 - `references/aeo-evidence.md` records the sources behind each severity decision, including the
   signals this tool deliberately does not weight.
 

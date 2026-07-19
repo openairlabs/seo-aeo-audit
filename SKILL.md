@@ -1,5 +1,6 @@
 ---
 name: seo-aeo-audit
+version: 2.0.0
 description: Audit any website (any framework) for SEO and AEO (Answer-Engine Optimization) quality, producing a prioritized improvement report with framework-specific code fixes. Holistic whole-site audit, not just blog posts. Use when the user says "audit X.com", "SEO audit on...", "AEO audit", "check SEO/AEO gaps on...", or asks for an improvement/architectural report on a live website. Works on Next.js, Astro, Nuxt, SvelteKit, Gatsby, Remix, WordPress, Shopify, or generic HTML.
 ---
 

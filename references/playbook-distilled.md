@@ -2,10 +2,10 @@
 
 The principles that drive modern "gold-standard" content and site architecture. Apply them as evaluation lenses when synthesizing the audit report.
 
-## The core shift (2024 → 2026)
+## The core shift
 
-- **60% of searches now happen through AI interfaces** (ChatGPT, Perplexity, Google AI Overview, Claude).
-- **40% still go through Google blue links.**
+- Google's AI Overviews alone reach more than 2.5 billion users a month (Google, I/O 2026 — up from 1.5 billion in May 2025), and ChatGPT, Perplexity, and Claude add a large and growing number of people asking questions directly instead of typing keywords into a search box.
+- Classic search — Google's blue links — still drives real, substantial traffic for most sites; it hasn't gone away.
 - Every site needs to be optimized for **both**. AEO is not SEO-lite — it's a parallel discipline.
 
 ## AEO ≠ SEO — where they diverge

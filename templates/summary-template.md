@@ -13,7 +13,7 @@ Two things matter for how people find your website:
 - **Search visibility (SEO)** — whether your site shows up in Google, Bing, etc.
 - **AI visibility (AEO)** — whether AI assistants (ChatGPT, Perplexity, Google AI Overview, Claude) cite your site when someone asks them a question.
 
-Both matter in 2026. More than half of all searches now happen *through* an AI assistant rather than Google's blue links. If your site is optimized only for Google, you're invisible to the other half.
+Both matter. Google's AI Overviews alone now answer questions for more than 2.5 billion people a month (Google), and a growing number of people ask ChatGPT, Perplexity, or Claude directly instead of typing into Google. If your site is optimized only for classic Google search, you're invisible to that large and growing audience.
 
 This report is a health check on both.
 
@@ -87,7 +87,7 @@ Based on what I saw, here are creative/strategic moves beyond fixing broken thin
 - **llms.txt** — A newer file meant to do the same for AI assistants. Widely recommended, but no major AI search engine actually reads it yet, so treat it as optional.
 - **FAQPage schema** — Code that labels your Q&A sections so AI assistants can quote them. Google no longer turns it into a special search result, but AI answers still use it.
 - **Server-side rendering** — Whether your pages arrive as finished HTML or get assembled in the visitor's browser. AI crawlers can't run that assembly step, so browser-assembled pages look blank to them.
-- **Core Web Vitals** — Google's page-speed grades (LCP, CLS, INP). Slow = rank penalty.
+- **Core Web Vitals** — Google's three page-speed grades: **LCP** (how fast the main content loads), **CLS** (how much the page jumps around while loading), and **INP** (how quickly the page responds when a visitor clicks or taps). Slow = rank penalty. This report measures LCP and CLS directly, from one simulated page load. INP can only be measured from real visitors' devices over time (Google calls this field data) — this tool doesn't have access to that data, so INP isn't scored here.
 
 ---
 

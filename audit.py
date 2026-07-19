@@ -58,6 +58,19 @@ AI_CRAWLERS = [
     "YouBot",
 ]
 
+# Schema types Google has retired rich-result support for. Shipping these is not an
+# error — the markup is still valid Schema.org — but it earns nothing in search and
+# should not be recommended. Date = Google's deprecation announcement.
+DEPRECATED_SCHEMA_TYPES: dict[str, str] = {
+    "HowTo": "rich results removed September 2023",
+    "SpecialAnnouncement": "deprecated July 2025",
+    "ClaimReview": "deprecated June 2025",
+    "CourseInfo": "deprecated June 2025",
+    "EstimatedSalary": "deprecated June 2025",
+    "LearningVideo": "deprecated June 2025",
+    "VehicleListing": "deprecated June 2025",
+}
+
 TEMPLATE_PATTERNS: list[tuple[str, str]] = [
     ("home", r"^/?$"),
     ("blog_index", r"^/(blog|articles|posts|insights|learn)/?$"),
@@ -147,7 +160,7 @@ class PageData:
     organization_depth: dict[str, bool] = field(default_factory=dict)
     faq_detected_in_content: bool = False
     faqpage_schema: bool = False
-    howto_schema: bool = False
+    deprecated_schema: list[str] = field(default_factory=list)
     speakable_schema: bool = False
     breadcrumb_schema: bool = False
     author_schema: bool = False
@@ -665,7 +678,7 @@ def parse_page(url: str, html: str, template: str, meta: dict[str, Any]) -> Page
     walk(p.jsonld_raw, types)
     p.schema_types = sorted(types)
     p.faqpage_schema = "FAQPage" in types
-    p.howto_schema = "HowTo" in types
+    p.deprecated_schema = sorted(t for t in types if t in DEPRECATED_SCHEMA_TYPES)
     p.speakable_schema = "SpeakableSpecification" in types or any(
         "speakable" in str(k).lower() for k in json.dumps(p.jsonld_raw).split()
     )
@@ -979,7 +992,7 @@ def build_findings(
         "pricing": ["Product", "Offer"],
         "product": ["Product"],
         "platform": ["SoftwareApplication"],
-        "tool": ["HowTo", "SoftwareApplication"],
+        "tool": ["SoftwareApplication"],
         "about": ["AboutPage", "Organization"],
         "docs": ["TechArticle"],
     }
@@ -1000,6 +1013,21 @@ def build_findings(
                 framework_fix_key=f"schema.{tpl}",
                 impact_score=8 if tpl in ("home", "blog_post", "pricing") else 6,
             ))
+
+    # Deprecated schema types still shipping
+    deprecated_pages = [p for p in pages if p.deprecated_schema]
+    if deprecated_pages:
+        seen_types = sorted({t for p in deprecated_pages for t in p.deprecated_schema})
+        detail = ", ".join(f"{t} ({DEPRECATED_SCHEMA_TYPES[t]})" for t in seen_types)
+        findings.append(Finding(
+            id="aeo.schema.deprecated",
+            severity="info", category="aeo", template=None,
+            affected_urls=[p.url for p in deprecated_pages],
+            evidence=f"{len(deprecated_pages)} page(s) ship deprecated schema: {detail}.",
+            why="Google no longer generates rich results from these types. The markup is valid but earns nothing in search — it is maintenance cost without return.",
+            recommendation="Remove on the next content pass, or leave it if you rely on it elsewhere. Do not add more. For genuine Q&A content use QAPage.",
+            framework_fix_key=None, impact_score=1,
+        ))
 
     # Organization depth (homepage)
     home_pages = [p for p in pages if p.template == "home"]
@@ -1186,7 +1214,7 @@ def score_category(findings: list[Finding], category: str) -> int:
 def build_schema_matrix(pages: list[PageData]) -> dict[str, dict[str, bool]]:
     target_types = [
         "WebSite", "Organization", "BreadcrumbList",
-        "BlogPosting", "Article", "FAQPage", "HowTo",
+        "BlogPosting", "Article", "FAQPage", "QAPage",
         "Product", "Offer", "SoftwareApplication",
         "SpeakableSpecification", "Person",
     ]

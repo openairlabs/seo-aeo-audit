@@ -130,7 +130,8 @@ python render_docx.py summary.md summary.docx
 - Core Web Vitals proxies (FCP, LCP element, page weight, resource count) via Playwright
 
 ### AEO (deterministic, Python)
-- Schema.org coverage matrix per template (WebSite + Organization + BlogPosting + FAQPage + HowTo + Product + SoftwareApplication + BreadcrumbList + Speakable)
+- Schema.org coverage matrix per template (WebSite + Organization + BlogPosting + FAQPage + QAPage + Product + SoftwareApplication + BreadcrumbList + Speakable)
+- Deprecated-schema detection (HowTo, SpecialAnnouncement, ClaimReview, and friends) reported as informational, not as an error
 - Organization schema depth (founder[], sameAs[] **with Wikidata URL**, knowsAbout[], slogan, foundingDate, contactPoint, hasOfferCatalog)
 - FAQ content detection vs. FAQPage schema presence
 - Direct-answer paragraph (≤50 words opening)

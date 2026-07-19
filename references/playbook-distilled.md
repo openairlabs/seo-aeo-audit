@@ -26,7 +26,7 @@ The principles that drive modern "gold-standard" content and site architecture. 
 When auditing, look for these specifically. Sites that nail 5/6 outperform on AI surfaces:
 
 1. **Wikidata-referenced Organization schema** — the strongest entity signal. Without it, your brand is a string, not a citable entity.
-2. **FAQPage + HowTo + Speakable schemas** — direct answer-engine surfaces.
+2. **Speakable + QAPage schemas** — live answer-engine surfaces. FAQPage still feeds AI answer extraction but no longer earns rich results; HowTo is deprecated outright.
 3. **Direct-answer openings** — ≤50 words. AI cites verbatim.
 4. **Question-format headings** — auto-expands AEO surface area.
 5. **Open robots.txt policy for AI crawlers** — GPTBot, ClaudeBot, PerplexityBot, CCBot, Google-Extended, Applebot-Extended. Blocked = invisible.

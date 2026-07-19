@@ -11,16 +11,31 @@ What each page template SHOULD have as JSON-LD. The analyzer flags missing types
 | **pricing** | `Product` OR `SoftwareApplication`, `Offer` | `AggregateOffer`, `AggregateRating` | `FAQPage` (objection handling) |
 | **product** | `Product`, `Offer` | `AggregateRating`, `Review`, `Brand` | — |
 | **platform** | `SoftwareApplication`, `Offer` | `AggregateRating`, `ApplicationCategory` | — |
-| **tool** | `HowTo`, `SoftwareApplication` | `VideoObject` (if demo), `FAQPage` | `SpeakableSpecification` |
+| **tool** | `SoftwareApplication` | `VideoObject` (if demo) | `SpeakableSpecification` |
 | **integration** | `Product` or `Service`, `Offer` | Related `Brand` (the integration partner) | — |
-| **use_case** | `WebPage`, `BreadcrumbList` | `FAQPage`, `HowTo` (if step-by-step) | — |
+| **use_case** | `WebPage`, `BreadcrumbList` | `QAPage` (if genuine Q&A) | — |
 | **about** | `AboutPage`, `Organization` (reference only) | `Person` for each founder | Organization depth |
 | **contact** | `ContactPage`, `Organization` (reference) | `ContactPoint` | — |
-| **docs** | `TechArticle`, `BreadcrumbList` | `FAQPage`, `HowTo` | `SpeakableSpecification` |
+| **docs** | `TechArticle`, `BreadcrumbList` | `QAPage` (if genuine Q&A) | `SpeakableSpecification` |
 | **resources** | `WebPage` / `Article` / `CreativeWork` | `BreadcrumbList` | — |
 | **legal** | — (none needed) | `PrivacyPolicy` / `TermsOfService` (WebPage subtypes) | — |
 | **updates** | `BlogPosting` or `Article`, `BreadcrumbList` | — | — |
 | **careers** | `JobPosting` (per role) | `Organization` reference | — |
+
+## Deprecated — never recommend these
+
+Google has retired rich-result support for the following. The markup stays valid Schema.org, so
+existing implementations are harmless, but adding them earns nothing:
+
+| Type | Retired |
+|---|---|
+| `HowTo` | September 2023 |
+| `ClaimReview`, `CourseInfo`, `EstimatedSalary`, `LearningVideo`, `VehicleListing` | June 2025 |
+| `SpecialAnnouncement` | July 2025 |
+
+`FAQPage` is a special case: rich results are retired for all sites, but AI answer engines still
+parse it. Keep it where it exists; do not add it expecting SERP gain. For genuine question-and-answer
+pages (one question, community answers) use `QAPage` instead.
 
 ## Cross-page singletons
 

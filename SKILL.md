@@ -190,7 +190,7 @@ Don't just list what you see. For each screenshot, answer:
 Most audits are SEO-only. AEO (how AI answer engines like ChatGPT, Perplexity, Google AI Overview, Claude represent the site) is where sites win or lose in 2026. Heavily emphasize:
 
 - **Schema depth** — Organization schema with `sameAs` including Wikidata URL is a 10x entity-recognition signal
-- **FAQPage + HowTo + Speakable schemas** — direct AEO surfaces
+- **Speakable + QAPage schemas** — live AEO surfaces. Note: FAQPage no longer produces rich results (retired for all sites) but is still parsed for AI answer extraction — keep it where it exists, don't chase it for SERP gain. Never recommend HowTo; Google removed its rich results in September 2023.
 - **AI crawler policy** — robots.txt must allow GPTBot, ClaudeBot, PerplexityBot, CCBot, Google-Extended, Applebot-Extended (flag any disallows as gaps unless the user has a reason)
 - **llms.txt** — emerging standard, flag if missing
 - **Direct-answer structure** — first ≤50 words of each page should answer the implied question

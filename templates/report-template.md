@@ -70,7 +70,7 @@ Ordered by impact score.
 
 ## 4. Schema Coverage Matrix
 
-| Template | WebSite | Organization | BlogPosting | FAQPage | HowTo | Breadcrumb | Speakable | Product |
+| Template | WebSite | Organization | BlogPosting | FAQPage | QAPage | Breadcrumb | Speakable | Product |
 |---|---|---|---|---|---|---|---|---|
 | home | ✓ | ✗ | — | — | — | — | — | — |
 | blog_post | — | — | ✓ | ✗ | — | ✓ | ✗ | — |

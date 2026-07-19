@@ -104,7 +104,7 @@ const combined = combineSchemas(breadcrumbSchema, speakableSchema, articleSchema
 A single `src/utils/structured-data.ts` module exports reusable generators:
 
 - `generateFAQSchema(faqs)` — strips HTML from answers (schema.org requires plain text)
-- `generateHowToSchema(data)` — with totalTime, estimatedCost, steps
+- `generateQAPageSchema(data)` — for genuine single-question pages with community answers
 - `generateProductSchema(data)` — includes aggregateRating, priceValidUntil auto-calculated
 - `generateSoftwareApplicationSchema(data)` — with provider reference to Organization `@id`
 - `generateWebSiteSchema(siteUrl, siteName, hasSearch)`
@@ -131,7 +131,7 @@ const seoSchema = z.object({
   ogImage: z.union([z.string(), z.object({ src, alt, width, height })]).optional(),
   twitterCard: z.enum(['summary', 'summary_large_image', 'app', 'player']).default('summary_large_image'),
   focusKeyword: z.string().optional(),
-  schemaType: z.enum(['Article', 'BlogPosting', 'TechArticle', 'HowTo', 'FAQPage', 'SoftwareApplication', 'Product']).optional(),
+  schemaType: z.enum(['Article', 'BlogPosting', 'TechArticle', 'QAPage', 'FAQPage', 'SoftwareApplication', 'Product']).optional(),
 }).optional();
 ```
 

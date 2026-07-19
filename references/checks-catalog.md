@@ -51,7 +51,7 @@ Every check run by the analyzer, what it measures, and why it matters. Claude us
 - **Blog post: BlogPosting + Breadcrumb + (FAQPage if FAQ) + Author** — rich results, AI citation
 - **Pricing: Product + Offer** — price rich results
 - **Product/platform: SoftwareApplication + Offer + AggregateRating** — software listings
-- **Tool page: HowTo + SoftwareApplication** — step-by-step rich results
+- **Tool page: SoftwareApplication** — application rich results. (HowTo is *not* recommended: Google removed HowTo rich results in September 2023.)
 - **About: AboutPage + Organization.founder** — entity depth
 - **Legal: no schema required**
 

@@ -151,7 +151,7 @@ Outline:
     const ua = navigator.userAgent || '';
     const exclude = /Lighthouse|PageSpeed|GTmetrix|Pingdom|WebPageTest/i;
     if (exclude.test(ua)) return;
-    const botPatterns = /GPT|ChatGPT|OpenAI|Claude|Anthropic|Perplexity|Bard|Gemini|Copilot|ExaBot|Googlebot|bingbot/i;
+    const botPatterns = /GPTBot|ChatGPT-User|OAI-SearchBot|ClaudeBot|Claude-User|anthropic-ai|PerplexityBot|Perplexity-User|Google-Extended|Applebot-Extended|DuckAssistBot|MistralAI-User|Meta-ExternalAgent|CCBot|Bytespider|Googlebot|bingbot/i;
     if (botPatterns.test(ua)) {
       fetch('/api/track-bot', {
         method: 'POST',

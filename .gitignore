@@ -31,3 +31,6 @@ audits/
 # Secrets
 .env
 .env.local
+
+# SDD scratch (subagent-driven-development ledger)
+.superpowers/

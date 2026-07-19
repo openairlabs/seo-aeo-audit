@@ -42,20 +42,37 @@ except ImportError:
 
 USER_AGENT = "Mozilla/5.0 (compatible; SEOAuditBot/1.0)"
 
-AI_CRAWLERS = [
-    "GPTBot", "ChatGPT-User", "OAI-SearchBot",
-    "ClaudeBot", "Claude-Web", "anthropic-ai",
+# AI crawlers split by what blocking them actually costs you.
+#
+# SEARCH_AI_CRAWLERS fetch pages to answer a user's live query and cite the source.
+# Blocking these removes you from AI-mediated discovery — a real visibility loss.
+#
+# TRAINING_AI_CRAWLERS collect corpora for model training. Blocking them is a
+# legitimate content-licensing decision with no direct search cost, so the audit
+# reports it without treating it as a problem.
+SEARCH_AI_CRAWLERS = [
+    "GPTBot", "OAI-SearchBot", "ChatGPT-User",
+    "ClaudeBot", "Claude-User",
     "PerplexityBot", "Perplexity-User",
-    "CCBot",
     "Google-Extended",
     "Applebot-Extended",
+    "DuckAssistBot",
+    "MistralAI-User",
+    "YouBot",
+]
+
+TRAINING_AI_CRAWLERS = [
+    "CCBot",
+    "anthropic-ai",
+    "cohere-ai",
     "Bytespider",
     "Amazonbot",
-    "cohere-ai",
+    "Meta-ExternalAgent",
+    "Google-CloudVertexBot",
     "Diffbot",
-    "DuckAssistBot",
     "PetalBot",
-    "YouBot",
+    "Omgili",
+    "Timpibot",
 ]
 
 # Schema types Google has retired rich-result support for. Shipping these is not an
@@ -239,51 +256,73 @@ async def fetch_text(client: httpx.AsyncClient, url: str) -> Optional[str]:
     return None
 
 
+def parse_robots_txt(text: str) -> dict[str, Any]:
+    """Parse robots.txt into sitemap URLs and per-user-agent rule groups.
+
+    Consecutive User-agent lines form one group sharing the rules that follow, so
+    agents accumulate until the first rule line is seen; only then does the next
+    User-agent line start a fresh group. Unrecognised directives (Crawl-delay,
+    Sitemap, vendor extensions) must not end a group.
+
+    Agent names are matched case-insensitively per RFC 9309, so keys are stored
+    lowercased. Look them up via ai_policy_for() rather than indexing directly.
+    """
+    sitemap_urls: list[str] = []
+    policies: dict[str, dict[str, list[str]]] = {}
+    current_agents: list[str] = []
+    group_open = False  # True once this group has consumed at least one rule
+
+    for line in text.splitlines():
+        ls = line.split("#", 1)[0].strip()
+        if not ls or ":" not in ls:
+            continue
+        field, _, value = ls.partition(":")
+        field = field.strip().lower()
+        value = value.strip()
+        if field == "sitemap":
+            if value:
+                sitemap_urls.append(value)
+        elif field == "user-agent":
+            if group_open:
+                current_agents = []
+                group_open = False
+            if value:
+                current_agents.append(value.lower())
+        elif field in ("disallow", "allow"):
+            group_open = True
+            for a in current_agents:
+                policy = policies.setdefault(a, {"disallow": [], "allow": []})
+                policy[field].append(value)
+
+    return {"sitemap_urls": sitemap_urls, "ai_crawler_policy": policies}
+
+
 async def fetch_robots(client: httpx.AsyncClient, base: str) -> dict[str, Any]:
     robots_url = urljoin(base, "/robots.txt")
     text = await fetch_text(client, robots_url)
+    parsed = parse_robots_txt(text or "")
     result = {
         "url": robots_url,
         "present": text is not None,
         "text": text or "",
-        "sitemap_urls": [],
-        "ai_crawler_policy": {},
+        "sitemap_urls": parsed["sitemap_urls"],
+        "ai_crawler_policy": parsed["ai_crawler_policy"],
         "has_llms_txt": False,
     }
-    if text:
-        for line in text.splitlines():
-            line = line.strip()
-            if line.lower().startswith("sitemap:"):
-                sm = line.split(":", 1)[1].strip()
-                result["sitemap_urls"].append(sm)
-        # Parse per-agent directives (simplified)
-        current_agents: list[str] = []
-        for line in text.splitlines():
-            ls = line.strip()
-            if not ls or ls.startswith("#"):
-                continue
-            if ls.lower().startswith("user-agent:"):
-                agent = ls.split(":", 1)[1].strip()
-                if agent == "*":
-                    current_agents = ["*"]
-                else:
-                    current_agents.append(agent)
-            elif ls.lower().startswith("disallow:"):
-                path = ls.split(":", 1)[1].strip()
-                for a in current_agents:
-                    result["ai_crawler_policy"].setdefault(a, {"disallow": [], "allow": []})
-                    result["ai_crawler_policy"][a]["disallow"].append(path)
-            elif ls.lower().startswith("allow:"):
-                path = ls.split(":", 1)[1].strip()
-                for a in current_agents:
-                    result["ai_crawler_policy"].setdefault(a, {"disallow": [], "allow": []})
-                    result["ai_crawler_policy"][a]["allow"].append(path)
-            else:
-                current_agents = []
     # llms.txt
     llms_text = await fetch_text(client, urljoin(base, "/llms.txt"))
     result["has_llms_txt"] = llms_text is not None
     return result
+
+
+def ai_policy_for(robots: dict[str, Any], agent: str) -> dict[str, list[str]]:
+    """Look up a user-agent's parsed rules. Names are case-insensitive (RFC 9309)."""
+    return robots.get("ai_crawler_policy", {}).get(agent.lower(), {"disallow": [], "allow": []})
+
+
+def blocks_everything(policy: dict[str, list[str]]) -> bool:
+    """True if the group disallows the whole site with no re-allowing rule."""
+    return "/" in policy.get("disallow", []) and not policy.get("allow")
 
 
 async def fetch_sitemap(client: httpx.AsyncClient, sitemap_url: str, seen: set[str]) -> list[str]:
@@ -837,22 +876,46 @@ def build_findings(
         ))
 
     # --- AI crawler policy ---
-    star_policy = robots.get("ai_crawler_policy", {}).get("*", {"disallow": []})
-    star_disallows = star_policy.get("disallow", [])
-    global_blocks_all = "/" in star_disallows
-    blocked_ai = []
-    for bot in AI_CRAWLERS:
-        policy = robots.get("ai_crawler_policy", {}).get(bot)
-        if policy and "/" in policy.get("disallow", []):
-            blocked_ai.append(bot)
-    if blocked_ai:
+    star_blocks_all = blocks_everything(ai_policy_for(robots, "*"))
+
+    def blocked(bots: list[str]) -> list[str]:
+        out = []
+        for bot in bots:
+            policy = ai_policy_for(robots, bot)
+            has_own_group = bool(policy.get("disallow") or policy.get("allow"))
+            # A bot with no group of its own falls through to the wildcard group.
+            if blocks_everything(policy) or (not has_own_group and star_blocks_all):
+                out.append(bot)
+        return out
+
+    blocked_search = blocked(SEARCH_AI_CRAWLERS)
+    blocked_training = blocked(TRAINING_AI_CRAWLERS)
+
+    if blocked_search:
+        via = " (via the wildcard User-agent: * group)" if star_blocks_all else ""
         findings.append(Finding(
             id="aeo.ai_crawlers.blocked",
             severity="high", category="aeo", template=None, affected_urls=[base_url],
-            evidence=f"robots.txt explicitly disallows: {', '.join(blocked_ai)}",
-            why="Blocked AI crawlers cannot index your content for answer-engine surfaces (ChatGPT, Perplexity, Claude, Google AI Overview). You vanish from AI-mediated discovery.",
-            recommendation=f"Review robots.txt: intentionally block only what you must. Allow {', '.join(AI_CRAWLERS[:6])} unless content is proprietary.",
+            evidence=f"robots.txt disallows{via}: {', '.join(blocked_search)}",
+            why=(
+                "These crawlers fetch pages to answer a user's live query and cite the source. "
+                "Blocking them removes the site from AI-mediated discovery in ChatGPT, Claude, Perplexity and AI Overviews. "
+                "Two distinctions worth knowing: blocking Google-Extended stops Gemini training but does NOT remove you "
+                "from AI Overviews, which crawl as Googlebot; and blocking GPTBot does not stop ChatGPT citing you, "
+                "because live browsing fetches as ChatGPT-User."
+            ),
+            recommendation=f"Allow {', '.join(SEARCH_AI_CRAWLERS[:6])} unless the content is genuinely proprietary. Block by path, not by blanket Disallow: /.",
             framework_fix_key="ai_crawlers.blocked", impact_score=9,
+        ))
+
+    if blocked_training:
+        findings.append(Finding(
+            id="aeo.ai_crawlers.training_blocked",
+            severity="info", category="aeo", template=None, affected_urls=[base_url],
+            evidence=f"robots.txt disallows training crawlers: {', '.join(blocked_training)}",
+            why="These crawlers collect training corpora rather than answering live queries, so blocking them carries no direct search or citation cost. Recorded so the policy is visible, not because it is a problem.",
+            recommendation="No action needed. This is a content-licensing decision, and blocking training crawlers while allowing search crawlers is a coherent position.",
+            framework_fix_key=None, impact_score=1,
         ))
     if not robots.get("has_llms_txt"):
         findings.append(Finding(

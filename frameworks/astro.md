@@ -157,7 +157,7 @@ export function generateWebSiteSchema(siteUrl: string, siteName: string) {
   "legalName": "Example Inc Pty Ltd",
   "url": "https://www.example.com",
   "logo": { "@type": "ImageObject", "url": "https://www.example.com/logo.webp" },
-  "foundingDate": "2024-01-01",
+  "foundingDate": "YYYY-MM-DD",
   "founder": [
     { "@type": "Person", "name": "Founder Name", "jobTitle": "CEO" }
   ],

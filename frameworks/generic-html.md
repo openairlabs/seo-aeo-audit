@@ -22,13 +22,13 @@ Serve `/sitemap.xml` at root. Minimal example:
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://www.example.com/</loc>
-    <lastmod>2026-04-17</lastmod>
+    <lastmod>YYYY-MM-DD</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.example.com/pricing</loc>
-    <lastmod>2026-03-10</lastmod>
+    <lastmod>YYYY-MM-DD</lastmod>
     <priority>0.9</priority>
   </url>
 </urlset>
@@ -124,7 +124,7 @@ Must be self-referential and absolute.
   "name": "Example Inc",
   "url": "https://www.example.com",
   "logo": { "@type": "ImageObject", "url": "https://www.example.com/logo.png" },
-  "foundingDate": "2024-01-01",
+  "foundingDate": "YYYY-MM-DD",
   "founder": [{ "@type": "Person", "name": "Founder Name", "jobTitle": "CEO" }],
   "knowsAbout": ["Topic 1", "Topic 2"],
   "slogan": "One-line slogan",
@@ -161,8 +161,8 @@ Must be self-referential and absolute.
   "@type": "BlogPosting",
   "headline": "Post title",
   "description": "Post excerpt",
-  "datePublished": "2026-04-17T10:00:00Z",
-  "dateModified": "2026-04-17T10:00:00Z",
+  "datePublished": "YYYY-MM-DDTHH:MM:SSZ",
+  "dateModified": "YYYY-MM-DDTHH:MM:SSZ",
   "author": { "@type": "Person", "name": "Author Name" },
   "image": "https://www.example.com/post-image.png",
   "url": "https://www.example.com/blog/slug",

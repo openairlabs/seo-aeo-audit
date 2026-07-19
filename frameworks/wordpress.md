@@ -92,7 +92,7 @@ add_filter('rank_math/json_ld', function($data, $jsonld) {
     ];
     $data['Organization']['knowsAbout'] = ['Topic 1', 'Topic 2'];
     $data['Organization']['slogan'] = 'One-line slogan';
-    $data['Organization']['foundingDate'] = '2024-01-01';
+    $data['Organization']['foundingDate'] = 'YYYY-MM-DD';
     if (!isset($data['Organization']['sameAs'])) $data['Organization']['sameAs'] = [];
     $data['Organization']['sameAs'][] = 'https://www.wikidata.org/wiki/Qxxxxxx';
   }

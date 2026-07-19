@@ -55,7 +55,7 @@ weight for AI citation.
   Google-CloudVertexBot, Diffbot, PetalBot, Omgili, Timpibot). Adds Meta-ExternalAgent,
   MistralAI-User, Google-CloudVertexBot, Claude-User, Omgili and Timpibot.
 - **robots.txt parsing follows RFC 9309.** Consecutive `User-agent` lines form one group sharing the
-  rules that follow; unrecognised directives no longer end a group; agent names match
+  rules that follow; unrecognised directives leave the group open; agent names match
   case-insensitively; a `Disallow: /` paired with a re-allowing `Allow:` is not treated as a full
   block. Crawlers without their own group correctly inherit the wildcard group. Parsing is extracted
   to `parse_robots_txt()` so it can be tested without network access.
@@ -82,13 +82,13 @@ weight for AI citation.
 
 - `extruct` and `w3lib` dependencies. `extruct` was imported behind a try/except and its
   availability flag was never read; `w3lib` was only its transitive dependency.
-- Documentation for checks the analyzer does not run. Orphan pages, broken internal links, internal
-  link depth, RSS autodiscovery, image sitemaps and OG image status checks need a full crawl and are
-  now listed as out of scope rather than described as features. Fields that are parsed but not
-  scored are listed explicitly as "collected but not scored".
+- Orphan pages, broken internal links, internal link depth, RSS autodiscovery, image sitemaps and OG
+  image status are now listed under "out of scope" — each needs a full site crawl, which this tool
+  does not perform. Fields that are parsed for the report but carry no score are listed under
+  "collected but not scored", so the boundary is explicit in both directions.
 
 ### Fixed
 
-- Date-only `dateModified` values are parsed correctly. Previously they raised on comparison inside
-  a bare `except`, so the freshness check did not run on the most common date format.
-- `--focus strategic` no longer returns an empty result set.
+- Date-only `dateModified` values are parsed, widening freshness coverage to the most common date
+  format.
+- `--focus strategic` returns a meaningful result set.
